@@ -1,0 +1,26 @@
+# Ignore Python bytecode and cache
+__pycache__/
+*.py[cod]
+
+# Ignore virtual environments
+venv/
+ENV/
+env/
+.venv/
+
+# Ignore environment variable files
+.env
+
+# Ignore Streamlit configuration
+.streamlit/
+
+# Ignore cookies or session data
+cookies.txt
+
+# Do not ignore these specific files (they will be tracked)
+!app.py
+!backend.py
+!Dockerfile
+!README.md
+!requirements.txt
+!utils.py
