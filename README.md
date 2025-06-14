@@ -4,6 +4,7 @@ A powerful Streamlit application that lets you chat with multiple YouTube videos
 
 ## ✨ Features
 
+
 - **Multiple Input Types**: Support for single videos, playlists, and channel searches
 - **Automatic Transcript Extraction**: Uses `youtube_transcript_api` to get English captions
 - **Smart Video Discovery**: Extracts video URLs from playlist and search pages
