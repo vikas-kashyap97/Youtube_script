@@ -20,6 +20,10 @@ A powerful Streamlit application that lets you chat with multiple YouTube videos
 
 ### 1. Installation & Setup
 
+## Note: If you encounter issues related to ffmpeg, please ensure it is installed correctly.
+You can download ffmpeg (version 7.1.1 Windows 64-bit) from:
+https://www.videohelp.com/software/ffmpeg
+
 ```bash
 # Clone the repository
 git clone <your-repo-url>
