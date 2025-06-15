@@ -105,6 +105,27 @@ def format_chat_message(message, role):
     else:
         st.markdown(f"**AI:** {message}")
 
+with st.sidebar:
+    st.header("🍪 Step 0: Setup Cookies")
+
+    st.markdown("""
+    **👉 Instruction to get cookies:**
+    1. Download the Chrome Extension:  
+       [cookies.txt LOCALLY 0.7.0](https://chromewebstore.google.com/search/cookies.txt%20LOCALLY%200.7.0?hl=en-US&utm_source=ext_sidebar)
+    2. Go to `youtube.com` and log in (if needed).
+    3. Click the extension icon → Click "Export" → Save the file as `cookies.txt`.
+    4. Rename the file to `cookies.txt` **if it isn't already**.
+    5. Upload it below to use for video access (especially for age-restricted/private videos).
+    """)
+
+    uploaded_cookie = st.file_uploader("📂 Upload cookies.txt file", type="txt", key="cookie_upload")
+
+    if uploaded_cookie:
+        with open("cookies.txt", "wb") as f:
+            f.write(uploaded_cookie.read())
+        st.success("✅ Cookies file uploaded successfully and saved as `cookies.txt`.")
+
+
 # --- Sidebar: Video Processing Section ---
 with st.sidebar:
     st.header("🔧 Step 1: Process Videos")
@@ -330,12 +351,9 @@ if st.session_state['videos_processed']:
                 for i, suggestion in enumerate(suggestions):
                     with cols[i % 2]:
                         if st.button(suggestion, key=f"suggestion_{i}"):
-                            # Simulate user input
-                            st.session_state['chat_history'].append({
-                                'role': 'user', 
-                                'content': suggestion
-                            })
-                            st.rerun()
+                             st.session_state['pending_question'] = suggestion
+                             st.rerun()
+
         
         # Chat input
         user_input = st.chat_input("Ask me anything about the videos...")

@@ -1,3 +1,4 @@
+
 # 🎬 YouTube Playlist Transcript RAG App
 
 A powerful Streamlit application that lets you chat with multiple YouTube videos using AI. Extract transcripts from playlists, channel searches, or individual videos, and ask questions using Retrieval-Augmented Generation (RAG).
@@ -6,192 +7,113 @@ A powerful Streamlit application that lets you chat with multiple YouTube videos
 
 
 - **Multiple Input Types**: Support for single videos, playlists, and channel searches
-- **Automatic Transcript Extraction**: Uses `youtube_transcript_api` to get English captions
-- **Smart Video Discovery**: Extracts video URLs from playlist and search pages
+- **Automatic Transcript Extraction**: Uses `youtube_transcript_api` and AssemblyAI fallback
+- **Smart Video Discovery**: Extracts video URLs from playlist and search pages using `yt_dlp`
+- **Cookie File Upload Support**: Use age-restricted/private videos by uploading `cookies.txt`
 - **RAG-Powered Chat**: Ask questions and get AI responses based on video content
+- **Suggested Prompts**: Quick-start prompts to help users explore content
 - **Progress Tracking**: Real-time progress updates during processing
 - **Source Attribution**: See which videos your answers come from
-- **Configurable Limits**: Set maximum number of videos to process
+- **Downloadable Results**: Export processing summaries and transcripts
 
 ## 🚀 Quick Start
 
-### 1. Installation
+### 1. Installation & Setup
 
 ```bash
 # Clone the repository
 git clone <your-repo-url>
 cd youtube-playlist-rag
 
+# Make virtual .env variables and activate them
+python -m venv venv 
+venv\Scripts\activate  
+
 # Install dependencies
 pip install -r requirements.txt
+
+# Set your Google API key and ASSEMBLYAI_API_KEY
+
+echo "GOOGLE_API_KEY=your_google_api_key_here" > .env
+echo "ASSEMBLYAI_API_KEY=your_assemblyai_api_key_here" > .env
 ```
 
-### 2. Setup Environment
-
-```bash
-# Copy environment template
-cp .env.example .env
-
-# Edit .env and add your Google API Key
-# Get your key from: https://aistudio.google.com/app/apikey
-```
-
-### 3. Run the App
+### 2. Run the App
 
 ```bash
 streamlit run app.py
 ```
 
-## 🔧 Configuration
-
-### Environment Variables
-
-Create a `.env` file with:
-
-```bash
-GOOGLE_API_KEY=your_google_api_key_here
-```
-
-### Streamlit Secrets (Alternative)
-
-Create `.streamlit/secrets.toml`:
-
-```toml
-GOOGLE_API_KEY = "your_google_api_key_here"
-```
-
 ## 📱 Usage
+
+### Step 0: Upload Cookies for Authenticated Video Access
+
+1. Install this Chrome extension: [cookies.txt LOCALLY 0.7.0](https://chromewebstore.google.com/search/cookies.txt%20LOCALLY%200.7.0?hl=en-US&utm_source=ext_sidebar)
+2. Visit `youtube.com`, login, click the extension, and export cookies.
+3. Rename the file to `cookies.txt` and upload it inside the app (Sidebar Step 0).
 
 ### Step 1: Enter YouTube URL
 
-The app supports three types of URLs:
+The app supports these formats:
 
-**Single Video:**
 ```
 https://www.youtube.com/watch?v=VIDEO_ID
-```
-
-**Playlist:**
-```
 https://www.youtube.com/playlist?list=PLAYLIST_ID
-```
-
-**Channel Search:**
-```
 https://www.youtube.com/@channel/search?query=search_term
 ```
 
-### Step 2: Configure Settings
+### Step 2: Configure & Process
 
-- Set the maximum number of videos to process (1-50)
-- Click "Process Videos" to start
+- Set max videos (1–50)
+- Click "🚀 Process Videos"
 
 ### Step 3: Chat with Videos
 
-Once processing is complete:
-- Ask questions in natural language
-- Get AI-powered answers based on video transcripts
-- View source attribution for each answer
+- Use the chatbox or suggested prompts
+- Get detailed AI answers with source attribution
 
 ## 🛠️ Technical Architecture
 
 ### Backend Components (`backend.py`)
 
-- **`get_youtube_video_id()`**: Extract video IDs from various YouTube URL formats
-- **`get_youtube_transcript()`**: Fetch English transcripts using YouTube API
-- **`extract_video_links_from_search_url()`**: Scrape video URLs from channel search pages
-- **`extract_video_links_from_playlist()`**: Extract videos from playlist pages
-- **`build_vectorstore_from_multiple_videos()`**: Process multiple videos into FAISS vector store
-- **`process_youtube_video()`**: Handle single video processing with embeddings
+- `get_youtube_transcript()` — fallback from YouTubeTranscriptAPI to AssemblyAI
+- `build_vectorstore_from_multiple_videos()` — builds embeddings & vectorstore
+- `extract_video_links_from_playlist/search_url()` — collects video URLs with `yt_dlp`
+- `detect_ffmpeg_path()` — detects ffmpeg for audio conversion
 
 ### Frontend Components (`app.py`)
 
-- **Sidebar Interface**: URL input, settings, and processing controls
-- **Progress Tracking**: Real-time updates during video processing
-- **Chat Interface**: Interactive Q&A with source attribution
-- **Results Display**: Processing status and video statistics
-
-### Key Technologies
-
-- **Streamlit**: Web application framework
-- **LangChain**: RAG pipeline and document processing
-- **Google Gemini**: AI model for embeddings and chat responses
-- **FAISS**: Vector database for similarity search
-- **BeautifulSoup**: Web scraping for video discovery
-- **YouTube Transcript API**: Automated caption extraction
-
-## 📋 Supported URL Formats
-
-### ✅ Supported
-- `https://www.youtube.com/watch?v=VIDEO_ID`
-- `https://youtu.be/VIDEO_ID`
-- `https://www.youtube.com/playlist?list=PLAYLIST_ID`
-- `https://www.youtube.com/@channel/search?query=TERM`
-- `https://www.youtube.com/c/channel/search?query=TERM`
-
-### ❌ Not Supported
-- Private videos or playlists
-- Videos without English captions
-- Age-restricted content
-- Live streams
+- Cookie uploader for `cookies.txt`
+- Sidebar controls for YouTube URL, max video selection
+- Chat tab with streaming answers and suggested prompts
+- Transcript tab with download option
+- Analytics tab with success/failure stats
 
 ## ⚙️ Configuration Options
 
-### Video Processing Limits
+### Change Max Videos
 
 ```python
-# In app.py, adjust the slider range
-max_videos = st.slider(
-    "Maximum videos to process:",
-    min_value=1, 
-    max_value=50,  # Adjust this limit
-    value=10
-)
+# app.py
+max_videos = st.slider("Maximum videos to process:", 1, 50, value=10)
 ```
 
-### Chunk Size Settings
+### Embedding & Retrieval
 
 ```python
-# In backend.py, modify text splitting
-splitter = RecursiveCharacterTextSplitter(
-    chunk_size=1000,    # Adjust chunk size
-    chunk_overlap=200   # Adjust overlap
-)
-```
-
-### Retrieval Parameters
-
-```python
-# Modify number of chunks retrieved
-retriever = vector_store.as_retriever(
-    search_type="similarity", 
-    search_kwargs={"k": 5}  # Adjust k value
-)
+# backend.py
+splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
+retriever = vector_store.as_retriever(search_type="similarity", search_kwargs={"k": 5})
 ```
 
 ## 🔍 Troubleshooting
 
-### Common Issues
+- **"No captions available"**: Try another video or upload cookies.
+- **"Error extracting video links"**: URL not supported? Use direct playlist/video URLs.
+- **Age-restricted videos**: Upload `cookies.txt` to fix.
+- **Memory/Timeouts**: Reduce video count or chunk size.
 
-**1. "No captions available" Error**
-- The video doesn't have English captions
-- Try videos with auto-generated or manual captions
-
-**2. "Error extracting video links"**
-- The URL format might not be supported
-- Try copying the URL directly from YouTube
-
-**3. API Rate Limiting**
-- Reduce the number of videos processed
-- Add delays between requests (already implemented)
-
-**4. Memory Issues**
-- Reduce chunk size or maximum videos
-- Process videos in smaller batches
-
-### Debug Mode
-
-Enable detailed logging:
+Enable debugging:
 
 ```python
 import logging
@@ -200,60 +122,35 @@ logging.basicConfig(level=logging.DEBUG)
 
 ## 🚀 Deployment
 
-### Local Development
-
-```bash
-streamlit run app.py
-```
-
-### Streamlit Cloud
-
-1. Push code to GitHub
-2. Connect repository to Streamlit Cloud
-3. Add secrets in Streamlit Cloud dashboard
-4. Deploy automatically
-
-### Docker Deployment
+### Docker (Optional)
 
 ```dockerfile
 FROM python:3.9-slim
-
 WORKDIR /app
 COPY requirements.txt .
 RUN pip install -r requirements.txt
-
 COPY . .
 EXPOSE 8501
-
 CMD ["streamlit", "run", "app.py", "--server.port=8501", "--server.address=0.0.0.0"]
 ```
 
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests if applicable
-5. Submit a pull request
-
 ## 📄 License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the MIT License - see the [MIT License](LICENSE) file for details
 
 ## 🙏 Acknowledgments
 
-- [YouTube Transcript API](https://github.com/jdepoix/youtube-transcript-api)
 - [LangChain](https://github.com/langchain-ai/langchain)
 - [Streamlit](https://streamlit.io/)
+- [AssemblyAI](https://www.assemblyai.com/)
+- [YouTube Transcript API](https://github.com/jdepoix/youtube-transcript-api)
+- [yt-dlp](https://github.com/yt-dlp/yt-dlp)
 - [Google Gemini](https://deepmind.google/technologies/gemini/)
-
-## 📞 Support
-
-For issues and questions:
-- Check the [Issues](../../issues) page
-- Review the troubleshooting section above
-- Ensure your Google API key is valid and has quota
 
 ---
 
+<<<<<<< HEAD
 **Built with ❤️ using Streamlit, LangChain, and Google Gemini**
+=======
+**Built with ❤️ using Streamlit, LangChain, yt-dlp, and Google Gemini.**
+>>>>>>> dd858c6 (first commit)
