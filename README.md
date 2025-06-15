@@ -26,8 +26,8 @@ You can download ffmpeg (version 7.1.1 Windows 64-bit) from:
 
 ```bash
 # Clone the repository
-git clone <your-repo-url>
-cd youtube-playlist-rag
+git clone https://github.com/vikas-kashyap97/Youtube_script.git
+cd Youtube_script
 
 # Make virtual .env variables and activate them
 python -m venv venv 
@@ -36,7 +36,7 @@ venv\Scripts\activate
 # Install dependencies
 pip install -r requirements.txt
 
-# Set your Google API key and ASSEMBLYAI_API_KEY
+# Set your GOOGLE_API_KEY and ASSEMBLYAI_API_KEY
 
 echo "GOOGLE_API_KEY=your_google_api_key_here" > .env
 echo "ASSEMBLYAI_API_KEY=your_assemblyai_api_key_here" > .env
