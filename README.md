@@ -149,12 +149,3 @@ This project is licensed under the MIT License - see the [MIT License](LICENSE) 
 
 ---
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-**Built with ❤️ using Streamlit, LangChain, and Google Gemini**
-=======
-**Built with ❤️ using Streamlit, LangChain, yt-dlp, and Google Gemini.**
->>>>>>> dd858c6 (first commit)
-=======
-**Built with ❤️ using Streamlit, LangChain, yt-dlp, and Google Gemini.**
->>>>>>> dd858c6f5cff6454ff40138f52b92ff0f8268937
