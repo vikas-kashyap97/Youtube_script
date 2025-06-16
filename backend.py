@@ -27,17 +27,22 @@ logger = logging.getLogger(__name__)
 # === Utility Functions ===
 
 def detect_ffmpeg_path() -> str:
+    # Define paths relative to current working directory
+    project_root = os.getcwd()
     default_paths = [
-        "C:\\ffmpeg\\bin",
-        "C:\\ffmpeg-7.1.1-essentials_build\\bin",
-        os.path.join(os.getcwd(), "ffmpeg", "bin"),
+        os.path.join(project_root, "ffmpeg-7.1.1-essentials_build", "bin"),
+        os.path.join(project_root, "ffmpeg", "bin"),
     ]
+    
     for path in default_paths:
-        if os.path.isfile(os.path.join(path, "ffmpeg.exe")):
-            logger.info(f"✅ Detected ffmpeg at: {path}")
+        ffmpeg_exec = "ffmpeg.exe" if os.name == "nt" else "ffmpeg"
+        if os.path.isfile(os.path.join(path, ffmpeg_exec)):
+            logger.info(f"✅ FFmpeg found at: {path}")
             return path
+    
     logger.warning("⚠️ FFmpeg not found in default paths.")
     return ""
+
 
 def get_youtube_video_id(url: str) -> str:
     parsed_url = urlparse(url)
