@@ -24,7 +24,7 @@ A powerful Streamlit application that lets you chat with multiple YouTube videos
 
 You can download the required version (FFmpeg 7.1.1, Windows 64-bit) from the following source:
 
-🔗 Download FFmpeg 7.1.1 Essentials Build(ffmpeg-7.1.1-essentials_build)
+🔗 Download FFmpeg 7.1.1 Essentials Build(https://github.com/vikas-kashyap97/Youtube_script/tree/main/ffmpeg-7.1.1-essentials_build)
 
 After downloading, extract the contents and copy the ffmpeg folder to your C:\ drive (i.e., C:\ffmpeg). Make sure the bin directory inside it is added to your system's environment variables (Path) so it can be accessed globally from the command line.
 
